@@ -1,9 +1,12 @@
-describe('API Users', () => {
-
-  const getUsers = () => cy.request('GET', '/users')
+describe('API - Users | JSONPlaceholder', () => {
+  const userPayload = {
+    name: 'Gisele QA',
+    username: 'giseleqa',
+    email: 'gisele.qa@email.com'
+  }
 
   it('deve retornar lista de usuários com status 200', () => {
-    getUsers().then((response) => {
+    cy.request('GET', '/users').then((response) => {
       expect(response.status).to.eq(200)
       expect(response.body).to.be.an('array')
       expect(response.body).to.have.length(10)
@@ -20,30 +23,36 @@ describe('API Users', () => {
     cy.request('GET', '/users/1').then((response) => {
       expect(response.status).to.eq(200)
       expect(response.body.id).to.eq(1)
+      expect(response.body.name).to.be.a('string')
+      expect(response.body.email).to.include('@')
     })
   })
 
   it('deve criar usuário com sucesso', () => {
-    const user = {
-      name: 'Gisele QA',
-      username: 'giseleqa teste',
-      email: 'gisele.qa@email.com'
-    }
-
-    cy.request('POST', '/users', user).then((response) => {
+    cy.request('POST', '/users', userPayload).then((response) => {
       expect(response.status).to.eq(201)
-      expect(response.body).to.include(user)
+      expect(response.body).to.include(userPayload)
+      expect(response.body).to.have.property('id')
     })
   })
 
   it('deve atualizar usuário com sucesso', () => {
-    const updatedUser = {
-      name: 'Gisele QA Atualizada'
-    }
-
-    cy.request('PUT', '/users/1', updatedUser).then((response) => {
+    cy.request('PUT', '/users/1', {
+      name: 'Gisele QA Atualizada',
+      username: 'giseleqa',
+      email: 'gisele.qa@email.com'
+    }).then((response) => {
       expect(response.status).to.eq(200)
-      expect(response.body.name).to.eq(updatedUser.name)
+      expect(response.body.name).to.eq('Gisele QA Atualizada')
+    })
+  })
+
+  it('deve atualizar parcialmente um usuário com PATCH', () => {
+    cy.request('PATCH', '/users/1', {
+      name: 'Nome Parcialmente Atualizado'
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+      expect(response.body.name).to.eq('Nome Parcialmente Atualizado')
     })
   })
 
@@ -53,7 +62,7 @@ describe('API Users', () => {
     })
   })
 
-  it('deve retornar 404 para usuário inexistente', () => {
+  it('deve retornar objeto vazio para usuário inexistente', () => {
     cy.request({
       method: 'GET',
       url: '/users/9999',
@@ -62,5 +71,4 @@ describe('API Users', () => {
       expect(response.status).to.eq(404)
     })
   })
-
 })
