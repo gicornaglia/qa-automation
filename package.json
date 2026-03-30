@@ -1,0 +1,24 @@
+{
+  "name": "qa-automation-ci-cd",
+  "version": "1.0.0",
+  "description": "Projeto de automação de testes de API com Cypress e integração CI/CD.",
+  "main": "index.js",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "test:api": "cypress run --spec 'cypress/e2e/api/**/*.cy.js'"
+  },
+  "keywords": [
+    "qa",
+    "automation",
+    "cypress",
+    "api",
+    "ci-cd"
+  ],
+  "author": "Gisele Valentim",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^14.5.4",
+    "dotenv": "^17.3.1"
+  }
+}
